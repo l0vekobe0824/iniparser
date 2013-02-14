@@ -20,6 +20,7 @@ private:
     // section, key, value
     std::map<std::string, std::map<std::string, std::string> > options;
 
+    void insertSection(std::pair<std::string, std::map<std::string, std::string> > pair);
     std::string &trim(std::string &str);
     std::string &toLower(std::string &str);
 };

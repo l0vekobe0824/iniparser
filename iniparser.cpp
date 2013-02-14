@@ -18,7 +18,7 @@ iniparser::iniparser(const std::string &path) : options()
             // it's a section
             if (line.front() == '[' && line.back() == ']') {
                 // insert options from old sections into map
-                options.insert(std::pair<std::string, std::map<std::string, std::string> >(currentSection, currentOptions));
+                insertSection(std::pair<std::string, std::map<std::string, std::string> >(currentSection, currentOptions));
 
                 currentSection = line.substr(1, line.length() - 2); // remove [ and ]
                 currentSection = trim(currentSection);
@@ -34,7 +34,7 @@ iniparser::iniparser(const std::string &path) : options()
             value = trim(value);
             currentOptions.insert(std::pair<std::string, std::string>(key, value));
         }
-        options.insert(std::pair<std::string, std::map<std::string, std::string> >(currentSection, currentOptions));
+        insertSection(std::pair<std::string, std::map<std::string, std::string> >(currentSection, currentOptions));
         ifs.close();
     }
 }
@@ -76,6 +76,16 @@ bool iniparser::getBool(const std::string &section, const std::string &key, bool
     if (tmp == "true" || tmp == "1" || tmp == "yes" || tmp == "y")
         return true;
     return false;
+}
+
+void iniparser::insertSection(std::pair<std::string, std::map<std::string, std::string> > pair)
+{
+    auto it = options.find(pair.first);
+    if (it != options.end()) { // sections already exists -> merge
+        it->second.insert(pair.second.begin(), pair.second.end());
+    } else {
+        options.insert(pair);
+    }
 }
 
 std::string &iniparser::trim(std::string &str)
