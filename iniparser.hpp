@@ -11,6 +11,13 @@ class iniparser {
 public:
     iniparser(const std::string &path);
     ~iniparser();
+    /**
+    * @brief adds the options from rhs (without overwriting)
+    *
+    * @param rhs
+    *
+    * @return 
+    */
     iniparser &operator+=(const iniparser &rhs);
     
     std::string getString(const std::string &section, const std::string &key, std::string defaultValue = "") const;
@@ -21,7 +28,9 @@ public:
     std::ostream &dump(std::ostream &out) const;
 
 private:
-    // section, key, value
+    /**
+    * @brief section, {key, value}
+    */
     std::map<std::string, std::map<std::string, std::string> > options;
 
     void insertSection(std::pair<std::string, std::map<std::string, std::string> > pair);
