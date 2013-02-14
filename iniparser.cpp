@@ -12,7 +12,7 @@ iniparser::iniparser(const std::string &path) : options()
             line = trim(line);
 
             // it's a comment
-            if (line.front() == '#')
+            if (line.front() == '#' || line.front() == ';')
                 continue;
 
             // it's a section
