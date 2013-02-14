@@ -19,6 +19,7 @@ iniparser::iniparser(const std::string &path) : options()
             if (line.front() == '[' && line.back() == ']') {
                 // insert options from old sections into map
                 insertSection(std::pair<std::string, std::map<std::string, std::string> >(currentSection, currentOptions));
+                currentOptions.clear();
 
                 currentSection = line.substr(1, line.length() - 2); // remove [ and ]
                 currentSection = trim(currentSection);
@@ -43,7 +44,15 @@ iniparser::~iniparser()
 {
 }
 
-std::string iniparser::getString(const std::string &section, const std::string &key, std::string defaultValue)
+iniparser &iniparser::operator+=(const iniparser &rhs)
+{
+    // merge rhs into us (without overwriting existing entries)
+    for (std::pair<std::string, std::map<std::string, std::string> > section : rhs.options)
+        insertSection(section);
+    return *this;
+}
+
+std::string iniparser::getString(const std::string &section, const std::string &key, std::string defaultValue) const
 {
     auto sectionOptions = options.find(section);
     if (sectionOptions == options.end())
@@ -56,17 +65,17 @@ std::string iniparser::getString(const std::string &section, const std::string &
     return keyvaluePair->second;
 }
 
-int iniparser::getInt(const std::string &section, const std::string &key, int defaultValue)
+int iniparser::getInt(const std::string &section, const std::string &key, int defaultValue) const
 {
     return std::stoi(getString(section, key, std::to_string(defaultValue)));
 }
 
-float iniparser::getFloat(const std::string &section, const std::string &key, float defaultValue)
+float iniparser::getFloat(const std::string &section, const std::string &key, float defaultValue) const
 {
     return std::stof(getString(section, key, std::to_string(defaultValue)));
 }
 
-bool iniparser::getBool(const std::string &section, const std::string &key, bool defaultValue)
+bool iniparser::getBool(const std::string &section, const std::string &key, bool defaultValue) const
 {
     std::string tmp = getString(section, key);
     if (tmp.empty())
@@ -76,6 +85,18 @@ bool iniparser::getBool(const std::string &section, const std::string &key, bool
     if (tmp == "true" || tmp == "1" || tmp == "yes" || tmp == "y")
         return true;
     return false;
+}
+
+std::ostream &iniparser::dump(std::ostream &out) const
+{
+    for (std::pair<std::string, std::map<std::string, std::string> > section : options) {
+        if(!section.first.empty()) // don't print "[]"
+            out << "[" << section.first << "]" << std::endl;
+        for (std::pair<std::string, std::string> keyval : section.second)
+            out << keyval.first << " = " << keyval.second << std::endl;
+        out << std::endl;
+    }
+    return out;
 }
 
 void iniparser::insertSection(std::pair<std::string, std::map<std::string, std::string> > pair)
@@ -88,14 +109,26 @@ void iniparser::insertSection(std::pair<std::string, std::map<std::string, std::
     }
 }
 
-std::string &iniparser::trim(std::string &str)
+std::string &iniparser::trim(std::string &str) const
 {
     str = str.erase(0, str.find_first_not_of(" \n\r\t")); // ltrim
     return str.erase(str.find_last_not_of(" \n\r\t") + 1); // rtrim
 }
 
-std::string &iniparser::toLower(std::string &str)
+std::string &iniparser::toLower(std::string &str) const
 {
     std::transform(str.begin(), str.end(), str.begin(), ::tolower);
     return str;
+}
+
+
+// free functions
+iniparser operator+(const iniparser &rhs, const iniparser &lhs)
+{
+    return iniparser(rhs) += lhs;
+}
+
+std::ostream &operator<<(std::ostream &out, const iniparser &rhs)
+{
+    return rhs.dump(out);
 }
