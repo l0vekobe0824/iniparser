@@ -1,13 +1,10 @@
 #ifndef INIPARSER_TEST_HPP
 #define INIPARSER_TEST_HPP
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestSuite.h>
-#include <cppunit/TestCaller.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include <cxxtest/TestSuite.h>
 #include "../iniparser.hpp"
 
-class iniparserTest : public CppUnit::TestFixture {
+class iniparserTest : public CxxTest::TestSuite {
 private:
     iniparser *ini;
 
@@ -30,47 +27,36 @@ public:
 
     void testGetString()
     {
-        CPPUNIT_ASSERT(ini->getString("", "name") == "bla");
-        CPPUNIT_ASSERT(ini->getString("sec1", "name") == "kk");
-        CPPUNIT_ASSERT(ini->getString("sec2", "name") == "asdf");
-        CPPUNIT_ASSERT(ini->getString("sec2", "does not exist") == "");
+        TS_ASSERT_EQUALS(ini->getString("", "name"), "bla");
+        TS_ASSERT_EQUALS(ini->getString("sec1", "name"), "kk");
+        TS_ASSERT_EQUALS(ini->getString("sec2", "name"), "asdf");
+        TS_ASSERT_EQUALS(ini->getString("sec2", "does not exist"), "");
     }
 
     void testGetBool()
     {
-        CPPUNIT_ASSERT(ini->getBool("sec1", "bool") == false);
-        CPPUNIT_ASSERT(ini->getBool("sec1", "none") == true);
+        TS_ASSERT(!ini->getBool("sec1", "bool"));
+        TS_ASSERT(ini->getBool("sec1", "none"));
     }
 
     void testGetInt()
     {
-        CPPUNIT_ASSERT(ini->getInt("sec1", "id") == 123);
+        TS_ASSERT_EQUALS(ini->getInt("sec1", "id"), 123);
     }
 
     void testGetFloat()
     {
-//        CPPUNIT_ASSERT(ini->getInt("sec2", "fl") == 1.3);
+        TS_ASSERT_DELTA(ini->getFloat("sec2", "fl"), 1.3, 0.0001);
     }
 
     void testOperator()
     {
         iniparser ini2("test2.ini");
-        CPPUNIT_ASSERT(ini->getString("sec2", "name") == "asdf");
-        CPPUNIT_ASSERT(ini->getBool("sec2", "bla") == false); // doesn't exist
+        TS_ASSERT_EQUALS(ini->getString("sec2", "name"), "asdf");
+        TS_ASSERT_EQUALS(ini->getBool("sec2", "bla"), false); // doesn't exist
         *ini += ini2;
-        CPPUNIT_ASSERT(ini->getString("sec2", "name") == "asdf");
-        CPPUNIT_ASSERT(ini->getBool("sec2", "bl") == true);
-    }
-
-    static CppUnit::Test *suite()
-    {
-        CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("iniparserTest");
-        suiteOfTests->addTest(new CppUnit::TestCaller<iniparserTest>("testGetString", &iniparserTest::testGetString));
-        suiteOfTests->addTest(new CppUnit::TestCaller<iniparserTest>("testGetBool", &iniparserTest::testGetBool));
-        suiteOfTests->addTest(new CppUnit::TestCaller<iniparserTest>("testGetInt", &iniparserTest::testGetInt));
-        suiteOfTests->addTest(new CppUnit::TestCaller<iniparserTest>("testGetFloat", &iniparserTest::testGetFloat));
-        suiteOfTests->addTest(new CppUnit::TestCaller<iniparserTest>("testOperator", &iniparserTest::testOperator));
-        return suiteOfTests;
+        TS_ASSERT_EQUALS(ini->getString("sec2", "name"), "asdf");
+        TS_ASSERT_EQUALS(ini->getBool("sec2", "bl"), true);
     }
 };
 
