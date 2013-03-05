@@ -60,6 +60,11 @@ std::list<std::string> iniparser::getSections() const
     return ret;
 }
 
+bool iniparser::sectionExist(const std::string &section) const
+{
+    return options.find(section) != options.end();
+}
+
 std::string iniparser::getString(const std::string &section, const std::string &key, std::string defaultValue) const
 {
     auto sectionOptions = options.find(section);

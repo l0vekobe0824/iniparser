@@ -65,6 +65,13 @@ public:
         iniparser ini2("test2.ini");
         TS_ASSERT_EQUALS(ini2.getSections().size(), 2);
     }
+
+    void testSectionExist()
+    {
+        TS_ASSERT(ini->sectionExist("sec1"));
+        TS_ASSERT(ini->sectionExist("sec2"));
+        TS_ASSERT(!ini->sectionExist("sec000"));
+    }
 };
 
 #endif // INIPARSER_TEST_HPP

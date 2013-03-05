@@ -22,6 +22,7 @@ public:
     iniparser &operator+=(const iniparser &rhs);
     
     std::list<std::string> getSections() const;
+    bool sectionExist(const std::string &section) const;
 
     std::string getString(const std::string &section, const std::string &key, std::string defaultValue = "") const;
     int getInt(const std::string &section, const std::string &key, int defaultValue = 0) const;
