@@ -58,6 +58,13 @@ public:
         TS_ASSERT_EQUALS(ini->getString("sec2", "name"), "asdf");
         TS_ASSERT_EQUALS(ini->getBool("sec2", "bl"), true);
     }
+
+    void testGetSections()
+    {
+        TS_ASSERT_EQUALS(ini->getSections().size(), 3);
+        iniparser ini2("test2.ini");
+        TS_ASSERT_EQUALS(ini2.getSections().size(), 2);
+    }
 };
 
 #endif // INIPARSER_TEST_HPP

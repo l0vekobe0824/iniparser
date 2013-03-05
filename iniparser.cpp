@@ -52,6 +52,14 @@ iniparser &iniparser::operator+=(const iniparser &rhs)
     return *this;
 }
 
+std::list<std::string> iniparser::getSections() const
+{
+    std::list<std::string> ret;
+    for (std::pair<std::string, std::map<std::string, std::string> > section : options)
+        ret.push_back(section.first);
+    return ret;
+}
+
 std::string iniparser::getString(const std::string &section, const std::string &key, std::string defaultValue) const
 {
     auto sectionOptions = options.find(section);

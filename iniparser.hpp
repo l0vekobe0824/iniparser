@@ -5,6 +5,7 @@
 #include <ostream>
 #include <string>
 #include <map>
+#include <list>
 #include <algorithm>
 
 class iniparser {
@@ -20,6 +21,8 @@ public:
     */
     iniparser &operator+=(const iniparser &rhs);
     
+    std::list<std::string> getSections() const;
+
     std::string getString(const std::string &section, const std::string &key, std::string defaultValue = "") const;
     int getInt(const std::string &section, const std::string &key, int defaultValue = 0) const;
     float getFloat(const std::string &section, const std::string &key, float defaultValue = 0.f) const;
