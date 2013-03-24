@@ -1,2 +1,3 @@
 iniparser
+*.o
 tests/runner*
